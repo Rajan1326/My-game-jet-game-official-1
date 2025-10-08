@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Space Adventure</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="hud">
+<div class="hud-item">Score: <b id="score">0</b></div>
+<div class="hud-item">Lives: <b id="lives">3</b></div>
+<div class="hud-item">Level: <b id="level">1</b></div>
+</div>
+<canvas id="game" width="960" height="600"></canvas>
+<div class="controls">
+<button id="btnStart">Start</button>
+<button id="btnPause">Pause</button>
+<button id="btnRestart">Restart</button>
+</div>
+<div id="overlay" class="overlay hidden">
+<div class="card">
+<h1 id="ovTitle">Space Adventure</h1>
+<p id="ovMsg">Press Start to begin!</p>
+<button id="ovBtn">Start</button>
+</div>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
