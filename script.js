@@ -329,8 +329,10 @@ requestAnimationFrame(loop);
 }
 
 // -------------------- INPUT --------------------
-document.addEventListener("keydown", e=>keys[e.code]=true);
-document.addEventListener("keyup", e=>keys[e.code]=false);
-document.getElementById("btnStart").onclick=startGame;
-document.getElementById("btnRestart").onclick=startGame;
-document.getElementById("ov
+document.addEventListener("keydown", e => keys[e.code] = true);
+document.addEventListener("keyup", e => keys[e.code] = false);
+
+document.getElementById("btnStart").onclick = startGame;
+document.getElementById("btnRestart").onclick = startGame;
+document.getElementById("ovBtn").onclick = startGame;
+document.getElementById("btnPause").onclick = () => running = !running;
