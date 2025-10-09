@@ -12,7 +12,12 @@ class Star {
 constructor(){ this.reset(); }
 reset(){ this.x=Math.random()*W; this.y=Math.random()*H; this.size=Math.random()*2; this.speed=20+Math.random()*60; }
 update(dt){ this.y+=this.speed*dt; if(this.y>H){ this.y=0; this.x=Math.random()*W; } }
-draw(){ ctx.fillStyle="white"; ctx.fillRect(this.x,this.y,this.size,this.size); }
+draw(){
+if(!inMothership){
+ctx.fillStyle="white";
+ctx.fillRect(this.x,this.y,this.size,this.size);
+}
+}
 }
 class Bullet {
 constructor(x,y,speed,color){ this.x=x; this.y=y; this.speed=speed; this.color=color; this.r=4; this.dead=false; }
@@ -33,29 +38,39 @@ this.cool=0.25;
 if(this.cool>0) this.cool-=dt;
 }
 draw(){
-ctx.fillStyle="cyan"; ctx.beginPath();
-ctx.moveTo(this.x,this.y-20); ctx.lineTo(this.x-20,this.y+20); ctx.lineTo(this.x+20,this.y+20);
-ctx.closePath(); ctx.fill();
+ctx.fillStyle="cyan";
+ctx.beginPath();
+ctx.moveTo(this.x,this.y-20);
+ctx.lineTo(this.x-20,this.y+20);
+ctx.lineTo(this.x+20,this.y+20);
+ctx.closePath();
+ctx.fill();
+ctx.fillStyle="orange";
+ctx.fillRect(this.x-5,this.y+20,10,8); // engine glow
 }
 }
 class Enemy {
-constructor(x,y,rate=2){
-this.x=x; this.y=y; this.r=15; this.dead=false; this.speed=100;
-this.cool=rate; this.rate=rate;
-}
+constructor(x,y,rate=2){ this.x=x; this.y=y; this.r=15; this.dead=false; this.speed=100; this.cool=rate; this.rate=rate; }
 update(dt){
 this.y+=this.speed*dt;
 this.cool-=dt;
-if(this.cool<=0){
-enemyBullets.push(new Bullet(this.x,this.y+10,200,"red"));
-this.cool=this.rate;
-}
+if(this.cool<=0){ enemyBullets.push(new Bullet(this.x,this.y+10,200,"red")); this.cool=this.rate; }
 if(this.y>H+20) this.dead=true;
 }
-draw(){ ctx.fillStyle="red"; ctx.beginPath(); ctx.arc(this.x,this.y,this.r,0,Math.PI*2); ctx.fill(); }
+draw(){
+ctx.fillStyle="darkred";
+ctx.beginPath();
+ctx.moveTo(this.x,this.y-15);
+ctx.lineTo(this.x-20,this.y+15);
+ctx.lineTo(this.x+20,this.y+15);
+ctx.closePath();
+ctx.fill();
+ctx.fillStyle="yellow";
+ctx.fillRect(this.x-5,this.y+10,10,5); // engine glow
+}
 }
 class Boss {
-constructor(x,y){ this.x=x; this.y=y; this.r=50; this.hp=12; this.dead=false; this.cool=1.5; }
+constructor(x,y){ this.x=x; this.y=y; this.r=60; this.hp=12; this.dead=false; this.cool=1.5; }
 update(dt){
 this.cool-=dt;
 if(this.cool<=0){
@@ -66,8 +81,15 @@ this.cool=1.5;
 }
 }
 draw(){
-ctx.fillStyle="darkred"; ctx.fillRect(this.x-60,this.y-30,120,60);
-ctx.fillStyle="white"; ctx.fillText("HP:"+this.hp,this.x-20,this.y-40);
+ctx.fillStyle="gray";
+ctx.fillRect(this.x-80,this.y-40,160,80);
+ctx.fillStyle="red";
+ctx.fillRect(this.x-10,this.y-50,20,10); // cockpit
+ctx.fillStyle="orange";
+ctx.fillText("HP:"+this.hp,this.x-20,this.y-60);
+ctx.fillStyle="blue";
+ctx.fillRect(this.x-70,this.y+30,30,10); // engine glow left
+ctx.fillRect(this.x+40,this.y+30,30,10); // engine glow right
 }
 hit(){ this.hp--; if(this.hp<=0) this.dead=true; }
 }
@@ -84,7 +106,14 @@ this.cool=0.35;
 }
 if(this.cool>0) this.cool-=dt;
 }
-draw(){ ctx.fillStyle="cyan"; ctx.fillRect(this.x-10,this.y-20,20,40); ctx.fillStyle="white"; ctx.fillRect(this.x-6,this.y-26,12,12); }
+draw(){
+ctx.fillStyle="lightblue";
+ctx.fillRect(this.x-10,this.y-20,20,40); // body
+ctx.fillStyle="white";
+ctx.fillRect(this.x-8,this.y-28,16,10); // helmet
+ctx.fillStyle="blue";
+ctx.fillRect(this.x-6,this.y-26,12,6); // visor
+}
 }
 class Guard {
 constructor(x,y){ this.x=x; this.y=y; this.r=16; this.dead=false; this.speed=60; this.cool=2; }
@@ -94,7 +123,14 @@ if(d>0){ this.x+=dx/d*this.speed*dt; this.y+=dy/d*this.speed*dt; }
 this.cool-=dt;
 if(this.cool<=0){ enemyBullets.push(new Bullet(this.x,this.y,220,"red")); this.cool=2; }
 }
-draw(){ ctx.fillStyle="green"; ctx.beginPath(); ctx.arc(this.x,this.y,this.r,0,Math.PI*2); ctx.fill(); }
+draw(){
+ctx.fillStyle="green";
+ctx.beginPath();
+ctx.arc(this.x,this.y,this.r,0,Math.PI*2);
+ctx.fill();
+ctx.fillStyle="red";
+ctx.fillRect(this.x-5,this.y+8,10,5); // blaster glow
+}
 }
 class GodJet {
 constructor(){ this.x=W/2; this.y=H-80; this.r=20; this.cool=0; this.hp=10; this.altFire=false; }
@@ -114,7 +150,17 @@ this.cool=0.3;
 }
 if(this.cool>0) this.cool-=dt;
 }
-draw(){ ctx.fillStyle="gold"; ctx.beginPath(); ctx.moveTo(this.x,this.y-25); ctx.lineTo(this.x-25,this.y+25); ctx.lineTo(this.x+25,this.y+25); ctx.closePath(); ctx.fill(); }
+draw(){
+ctx.fillStyle="gold";
+ctx.beginPath();
+ctx.moveTo(this.x,this.y-30);
+ctx.lineTo(this.x-25,this.y+25);
+ctx.lineTo(this.x+25,this.y+25);
+ctx.closePath();
+ctx.fill();
+ctx.fillStyle="orange";
+ctx.fillRect(this.x-5,this.y+25,10,10); // engine glow
+}
 }
 class Heart {
 constructor(x,y){ this.x=x; this.y=y; this.r=10; this.dead=false; }
@@ -183,7 +229,7 @@ if(player instanceof GodJet) player.hp++;
 }
 }
 
-// ✅ Fixed Collisions: trophy (restart after win)
+// ✅ Trophy collision (restart after win)
 if (trophy && Math.hypot(trophy.x - player.x, trophy.y - player.y) < 30) {
 running = false;
 score = 0; // reset score
@@ -191,7 +237,7 @@ document.getElementById("ovTitle").textContent = "Final Victory 🏆";
 document.getElementById("ovMsg").textContent = "Congratulations! You beat the game.";
 document.getElementById("ovBtn").textContent = "Play Again";
 document.getElementById("overlay").classList.remove("hidden");
-document.getElementById("ovBtn").onclick = startGame; // restart the whole game
+document.getElementById("ovBtn").onclick = startGame;
 }
 
 // Enemy + Boss + Guard hits
@@ -256,9 +302,22 @@ if(heartTimer<=0 && hearts.length<7){ hearts.push(new Heart(Math.random()*(W-40)
 // Cleanup
 bullets=bullets.filter(b=>!b.dead); enemyBullets=enemyBullets.filter(b=>!b.dead); enemies=enemies.filter(e=>!e.dead); bosses=bosses.filter(b=>!b.dead); hearts=hearts.filter(h=>!h.dead);
 
-// Draw
+// 🎨 Background draw
 ctx.clearRect(0,0,W,H);
-stars.forEach(s=>s.draw()); enemies.forEach(e=>e.draw()); enemyBullets.forEach(b=>b.draw()); bosses.forEach(b=>b.draw()); guards.forEach(g=>g.draw()); hearts.forEach(h=>h.draw());
+if(!inMothership){
+stars.forEach(s=>s.draw());
+} else {
+ctx.fillStyle = "#222"; ctx.fillRect(0,0,W,H);
+ctx.strokeStyle="#555";
+for(let i=0;i<W;i+=80){
+for(let j=0;j<H;j+=80){
+ctx.strokeRect(i,j,80,80); // grid panels
+}
+}
+}
+
+// Entities draw
+enemies.forEach(e=>e.draw()); enemyBullets.forEach(b=>b.draw()); bosses.forEach(b=>b.draw()); guards.forEach(g=>g.draw()); hearts.forEach(h=>h.draw());
 if(trophy) trophy.draw();
 player.draw(); bullets.forEach(b=>b.draw());
 
@@ -274,5 +333,4 @@ document.addEventListener("keydown", e=>keys[e.code]=true);
 document.addEventListener("keyup", e=>keys[e.code]=false);
 document.getElementById("btnStart").onclick=startGame;
 document.getElementById("btnRestart").onclick=startGame;
-document.getElementById("ovBtn").onclick=startGame;
-document.getElementById("btnPause").onclick=()=>running=!running;
+document.getElementById("ov
